@@ -7,6 +7,8 @@ export interface Transcript {
   meeting_date: string | null;
   uploaded_at: string;
   created_at: string;
+  video_url: string | null;
+  video_file_name: string | null;
 }
 
 export interface Summary {

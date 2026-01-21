@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Transcript, Summary } from '../types';
 import { supabase } from '../lib/supabase';
-import { Sparkles, Loader2, CheckCircle, ListChecks, Copy, Check } from 'lucide-react';
+import { Sparkles, Loader2, CheckCircle, ListChecks, Copy, Check, Video, ExternalLink } from 'lucide-react';
 
 interface Props {
   transcript: Transcript;
@@ -86,6 +86,30 @@ export default function TranscriptDetail({ transcript, onSummarize }: Props) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        {/* Video Recording Section */}
+        {transcript.video_url && (
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Video className="w-5 h-5 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900">Associated Recording</h4>
+                <p className="text-sm text-gray-600">{transcript.video_file_name}</p>
+              </div>
+              <a
+                href={transcript.video_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
+              >
+                <ExternalLink className="w-4 h-4" />
+                View Video
+              </a>
+            </div>
+          </div>
+        )}
+
         {/* AI Summary Section */}
         <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">

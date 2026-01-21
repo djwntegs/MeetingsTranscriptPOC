@@ -1,5 +1,5 @@
 import { Transcript } from '../types';
-import { FileText, Calendar, ExternalLink } from 'lucide-react';
+import { FileText, Calendar, ExternalLink, Video } from 'lucide-react';
 
 interface Props {
   transcripts: Transcript[];
@@ -35,7 +35,15 @@ export default function TranscriptsList({ transcripts, onSelectTranscript, selec
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-1">{transcript.title}</h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold text-gray-900">{transcript.title}</h3>
+                  {transcript.video_url && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                      <Video className="w-3 h-3" />
+                      Video
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-gray-600 mb-2">{transcript.file_name}</p>
 
                 <div className="flex items-center gap-4 text-xs text-gray-500">

@@ -20,6 +20,8 @@ interface TranscriptFile {
   content: string;
   url: string;
   lastModified: string;
+  videoUrl?: string;
+  videoFileName?: string;
 }
 
 let supabaseClient: any = null;
@@ -97,6 +99,8 @@ Deno.serve(async (req: Request) => {
               content: transcript.content,
               file_name: transcript.name,
               meeting_date: new Date(transcript.lastModified),
+              video_url: transcript.videoUrl || null,
+              video_file_name: transcript.videoFileName || null,
             }, {
               onConflict: 'sharepoint_url',
               ignoreDuplicates: false
@@ -158,6 +162,8 @@ Deno.serve(async (req: Request) => {
               content: transcript.content,
               file_name: transcript.name,
               meeting_date: new Date(transcript.lastModified),
+              video_url: transcript.videoUrl || null,
+              video_file_name: transcript.videoFileName || null,
             }, {
               onConflict: 'sharepoint_url',
               ignoreDuplicates: false
@@ -343,7 +349,8 @@ async function tryFetchTranscriptFromStream(
   driveItemId: string,
   siteId: string,
   accessToken: string,
-  fileName: string
+  fileName: string,
+  videoUrl?: string
 ): Promise<TranscriptFile | null> {
   try {
     console.log(`Checking for Stream transcript for: ${fileName}`);
@@ -374,6 +381,8 @@ async function tryFetchTranscriptFromStream(
             content: content,
             url: child.webUrl,
             lastModified: child.lastModifiedDateTime,
+            videoUrl: videoUrl,
+            videoFileName: fileName,
           };
         }
       }
@@ -418,12 +427,13 @@ async function tryFetchTranscriptFromDriveItem(
   driveItemId: string,
   siteId: string,
   accessToken: string,
-  fileName: string
+  fileName: string,
+  videoUrl?: string
 ): Promise<TranscriptFile | null> {
   try {
     console.log(`Attempting to fetch transcript for: ${fileName}`);
 
-    const streamTranscript = await tryFetchTranscriptFromStream(driveItemId, siteId, accessToken, fileName);
+    const streamTranscript = await tryFetchTranscriptFromStream(driveItemId, siteId, accessToken, fileName, videoUrl);
     if (streamTranscript) {
       return streamTranscript;
     }
@@ -482,6 +492,8 @@ async function tryFetchTranscriptFromDriveItem(
             content: content,
             url: file.webUrl,
             lastModified: file.lastModifiedDateTime,
+            videoUrl: videoUrl,
+            videoFileName: fileName,
           };
         }
       }
@@ -517,6 +529,8 @@ async function tryFetchTranscriptFromDriveItem(
                 content: content,
                 url: file.webUrl,
                 lastModified: file.lastModifiedDateTime,
+                videoUrl: videoUrl,
+                videoFileName: fileName,
               };
             }
           }
@@ -553,6 +567,8 @@ async function tryFetchTranscriptFromDriveItem(
                 content: content,
                 url: file.webUrl,
                 lastModified: file.lastModifiedDateTime,
+                videoUrl: videoUrl,
+                videoFileName: fileName,
               };
             }
           }
@@ -624,6 +640,8 @@ async function tryFetchTranscriptFromDriveItem(
               content: content,
               url: result.webUrl,
               lastModified: result.lastModifiedDateTime,
+              videoUrl: videoUrl,
+              videoFileName: fileName,
             };
           }
         }
@@ -735,6 +753,8 @@ async function fetchSharePointTranscripts(
           content: content,
           url: vttFile.webUrl,
           lastModified: vttFile.lastModifiedDateTime,
+          videoUrl: mp4File.webUrl,
+          videoFileName: mp4File.name,
         });
 
         processedVttNames.add(vttFile.name);
@@ -746,7 +766,8 @@ async function fetchSharePointTranscripts(
           mp4File.id,
           siteId,
           accessToken,
-          mp4File.name
+          mp4File.name,
+          mp4File.webUrl
         );
 
         if (transcriptFromDriveItem) {
